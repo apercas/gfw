@@ -3,12 +3,17 @@
 class MediaUploader < CarrierWave::Uploader::Base
 
   # Include RMagick or MiniMagick support:
-  include CarrierWave::RMagick
-  # include CarrierWave::MiniMagick
+  # include CarrierWave::RMagick
+  include CarrierWave::MiniMagick
 
   # Choose what kind of storage to use for this uploader:
   # storage :file
-  storage :fog
+
+  $name_time = DateTime.now.strftime('%Q')
+
+  def cache_dir
+    "#{Rails.root}/tmp/uploads"
+  end
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:
@@ -31,7 +36,7 @@ class MediaUploader < CarrierWave::Uploader::Base
   # Rotates the image based on the EXIF Orientation
   def fix_exif_rotation
     manipulate! do |img|
-      img.auto_orient!
+      img.auto_orient
       img = yield(img) if block_given?
       img
     end
@@ -40,7 +45,7 @@ class MediaUploader < CarrierWave::Uploader::Base
   # Strips out all embedded information from the image
   def strip
     manipulate! do |img|
-      img.strip!
+      img.strip
       img = yield(img) if block_given?
       img
     end
@@ -78,8 +83,8 @@ class MediaUploader < CarrierWave::Uploader::Base
 
   # Override the filename of the uploaded files:
   # Avoid using model.id or version_name here, see uploader/store.rb for details.
-  # def filename
-  #   "something.jpg" if original_filename
-  # end
+  def filename
+    $name_time + Digest::MD5.hexdigest(original_filename) + original_filename if original_filename
+  end
 
 end

@@ -1,15 +1,15 @@
-<% content_for :js do %>
-  <script>
-    $(function() {
-      cdb.init(function() {
-        window.accept_terms = new gfw.ui.view.Terms();
-      });
-    });
-  </script>
+<% content_for :header do %>
+  <h1 class="header-title"><%= 'Terms of Service'.html_safe %></h1>
+  <nav id="nav-mobile">
+    <form class="mobile-show" action="/search">
+      <svg class="icon"><use xlink:href="#shape-search"></use></svg>
+      <input type="text" name="query" id="search-input" placeholder="Search GFW website">
+    </form>
+    <div id="google_translate_element_box2"></div>
+    <div id="mobileMenu"></div>
+  </nav>
 <% end %>
 
-<% content_for :title do %>
-  <h1 class='header-title'>Terms of Service</h1>
-<% end %>
-
-<%= render 'shared/terms' %>
+<div class='terms_file'>
+  <%= render 'terms' %>
+</div>

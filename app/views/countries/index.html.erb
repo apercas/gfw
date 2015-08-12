@@ -1,36 +1,103 @@
-<% content_for :title do %>
-  <h1 class="header-title big"><%= t('.title') %></h1>
+<% content_for :header do %>
+  <h1><a href="/">Global Forest Watch</a></h1>
+  <nav id="nav-mobile">
+    <form class="mobile-show" action="/search">
+      <svg class="icon"><use xlink:href="#shape-search"></use></svg>
+      <input type="text" name="query" id="search-input" placeholder="Search GFW website">
+    </form>
+    <div id="google_translate_element_box2"></div>
+    <div id="mobileMenu"></div>
+    <ul class="mobile-hide">
+      <li>
+        <a <% if controller?("countries") && action?("index") %>class="current"<% end %> href="/countries">Country Profiles</a>
+      </li>
+      <li>
+        <a <% if controller?("countries") && action?("overview") %>class="current"<% end %> href="/countries/overview">Country Rankings</a>
+      </li>
+    </ul>
+  </nav>
 <% end %>
+
 
 <% content_for :js do %>
-  <script>
-    $(function() {
-      cdb.init(function() {
-        window.countries_index = new gfw.ui.view.CountriesIndex();
-      });
-    });
-  </script>
+  <%= render "countries_templates" %>
 <% end %>
-
-<div class="inner">
-  <div class="countries_block">
-    <h2 class="header-title">Explore worldwide data in the <%= link_to "global overview", countries_overview_path %></h2>
+<section id="countryListView" class="section country-profiles">
+  <div class="inner">
+    <h2 class="title-section">country profiles</h2><a href="#" id="lolailo"></a>
+    <!-- <a href="/countries/overview" class="btn gray countries-rankings-btn">country rankings</a> -->
   </div>
-</div>
+  <div class="inner countries-list-title">
+    <h3>select a country or view <a href="/countries/overview">country rankings</a></h3>
+  </div>
+  <div class="inner">
+    <div class="search-countries-box">
+      <input id="searchCountry" autofocus="true" type="text" placeholder="Type country name"/>
+    </div>
+  </div>
 
-<ul class="countries_list inner">
-  <% @countries.each do |c| %>
-    <% if c['enabled'] %>
-      <li id="<%= c['iso'] %>" class="country">
-        <a href="<%= country_path(id: c['iso']) %>">
-          <span class="country-content">
-            <h3 class="<%= c['name'].length > 14 ? ' small' : '' %>"><%= c['name'] %></h3>
-          </span>
-        </a>
-      </li>
+  <ul class="countries_list_index inner">
+    <% @countries.each do |c| %>
+      <% if c['enabled'] %>
+        <li id="<%= c['iso'] %>" class="country">
+          <a class="country-href" href="<%= country_path(id: c['iso']) %>">
+            <span class="country-content">
+              <h3 class="country-name <%= c['name'].length > 14 ? ' small' : '' %>"><%= c['name'] %></h3>
+            </span>
+          </a>
+        </li>
+      <% end %>
     <% end %>
-  <% end %>
-</ul>
+  </ul>
+</section>
 
-<p class="disclaimer inner">The Global Forest Watch country pages include only countries and territories that meet a minimum threshold of tree cover extent. Country lists and map boundaries do not imply any opinion on the part of Global Forest Watch or partners concerning the legal status or delineation of any country or territory.
-</p>
+<section class="interesting-section">
+  <div class="inner">
+    <h2 class="section-title">You may find this interesting</h2>
+    <div class="row">
+      <div class="col">
+        <div class="card">
+          <header>
+            <h2>GFW Interactive Map</h2>
+          </header>
+          <div class="content">
+            <p>View and analyze data in the GFW Interactive Map</p>
+          </div>
+          <footer>
+            <a href="/map" class="btn dark medium">Explore</a>
+          </footer>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <header>
+            <h2>Data Page</h2>
+          </header>
+          <div class="content">
+            <p>Learn about and download all GFW data</p>
+          </div>
+          <footer>
+            <a href="http://data.globalforestwatch.org/" class="btn dark medium">Read More</a>
+          </footer>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <header>
+            <h2>Get Involved</h2>
+          </header>
+          <div class="content">
+            <p>Find out how you can get involved with GFW</p>
+          </div>
+          <footer>
+            <a href="/getinvolved" class="btn dark medium">Read More</a>
+          </footer>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div id='sources' class="sources is-hidden">
+  <ul class='sources'>
+  </ul>
+</div>

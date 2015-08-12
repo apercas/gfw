@@ -1,0 +1,30 @@
+$w: 10px;
+.onoffradio {
+  display: inline-block;
+  width: $w;
+  height: $w;
+  border: 1px solid #ccc;
+  position: relative;
+
+  &.checked span {
+    background: #ccc;
+    @include transform(translate(-50%,-50%) scale(1))
+  }
+
+  @include border-radius(50%);
+}
+
+.onoffradio span {
+  display: inline-block;
+  vertical-align: top;
+  height: 4px;
+  width: 4px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  @include transform(translate(-50%,-50%) scale(0));
+  @include border-radius(50%);
+  @include transition(all 0.2s $easeInOutSine);
+
+  background: white;
+}

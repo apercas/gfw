@@ -5,30 +5,29 @@
     .header-logo {
       position: absolute;
       left: 10px;
+      display: none;
     }
   </style>
+
+<% end %>
+<% content_for :css do %>
+  <link rel="stylesheet" href="http://libs.cartocdn.com/cartodb.js/v3/themes/css/cartodb.css" />
 <% end %>
 
-<% content_for :js do %>
-  <%= javascript_include_tag "embed_countries" %>
+<header class="embed-header">
+  <h1><a href="http://www.globalforestwatch.org/" target="_blank">Global Forest Watch</a></h1>
+</header>
 
-  <script>
-    $(function() {
-      cdb.init(function() {
-        window.countries_show = new gfw.ui.view.CountriesEmbedShow({
-          iso: "<%= @country['iso'] %>"
-        });
-      });
-    });
-  </script>
-<% end %>
+<section id="countryShowView" data-iso="<%= @country['iso'] %>">
+  <% content_for :title do %>
+    <a href="/" class="header-logo">Global Forest Watch</a>
 
-<% content_for :title do %>
-  <a href="/" class="header-logo">Global Forest Watch</a>
+    <div class="header-inner inner">
+      <!-- <h1 class="header-title big"><%= @country['name'] %></h1> -->
+      <span title="Settings" class="country-icons-settings_engine umd_options_control" data-tip="Change UMD layer intensity"></span>
+    </div>
+  <% end %>
+  <%= render 'country' %>
+</section>
 
-  <div class="header-inner inner">
-    <h1 class="header-title big"><%= @country['name'] %></h1>
-  </div>
-<% end %>
-
-<%= render 'shared/circles' %>
+<%= render "shared/js_footer" %>

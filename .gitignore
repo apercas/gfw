@@ -13,14 +13,31 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/install
 /tmp
-
+/media/upload
+/public/uploads
+/public/media
+/install
 .DS_Store
-
+/install
 .gitignore
 .ruby-version
 .rvmrc
 .env
+.idea/
+.grunt
+node_modules
+public/assets
+vendor/assets/bower_components
+jstest/SpecRunner.html
+
+# Ignore Vagrant
+.vagrant
+Vagrantfile
 
 # Ingore Sublime project files:
 *.sublime-*
+
+#todo
+todo.todo

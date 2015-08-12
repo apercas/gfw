@@ -7,13 +7,18 @@
   <meta charset='utf-8'>
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Global Forest Watch</title>
+
+  <link href='http://fonts.googleapis.com/css?family=Fira+Sans:400,500,300' rel='stylesheet' type='text/css'>
+
+
   <meta name='description' content='Global Forest Watch (GFW) is a partnership that provides the most current, reliable, and actionable information about what is happening in forests worldwide.'>
+  <meta name="keywords" content="<%= @keywords %>">
   <meta name='viewport' content='width=device-width, initial-scale=1'>
   <meta name='robots' content='noindex'>
-
+  <meta name="google-site-verification" content="xx82D6cZ40Hvf-TT9jkhfsVi11yIeShPcK0zcc7m7ak" />
   <%= favicon_link_tag 'favicon.ico' %>
 
-  <%= stylesheet_link_tag "application", :media => "all" %>
+  <%= controller_stylesheet_link_tag %>
   <%= yield :css %>
   <style>
     body {
@@ -22,16 +27,17 @@
     }
 
     .footer {
-      position: absolute;
-      right: 0; bottom: 0; left: 0;
       margin: 0;
-      padding: 0 10px;
+      padding: 20px;
       background: #FFF;
-      font: normal 11px "Helvetica", Arial;
       color: #999;
       border-top: 1px solid #CCC;
-      line-height: 29px;
       z-index: 100;
+    }
+    .footer a{
+      margin: 0 auto;
+      display: block;
+      max-width: 300px;
     }
 
     .left { float: left; }
@@ -40,6 +46,10 @@
 
   <%= javascript_include_tag 'modernizr-2.6.2.min' %>
   <%= csrf_meta_tags %>
+  <script>
+    var gfw = window.gfw = {};
+    window.gfw.config = { GFW_API_HOST: "<%= ENV['GFW_API_HOST'] %>" };
+  </script>
 </head>
 <body class='<%= "#{controller_name} #{action_name}" %>'>
   <%= yield :title %>
@@ -47,16 +57,18 @@
   <%= yield %>
 
   <footer class="footer">
-    <%= link_to 'www.globalforestwatch.org', root_path, :target => '_blank', :class=> 'left' %>
-    <p class="right">Find out what is happening in forests right now.</p>
+  <% if @country %>
+    <a class="btn green uppercase full-width" href="http://globalforestwatch.org/country/<%= @country['iso']%>" target="_blank">View on GFW</a>
+  <% else %>
+    <a class="btn green uppercase full-width" href="http://globalforestwatch.org/countries/overview%>" target="_blank">View on GFW</a>
+  <% end %>
   </footer>
   <div class="backdrop"></div>
   <%= render 'shared/js_templates' %>
 
   <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=drawing,geometry&sensor=false"></script>
   <script src="http://libs.cartocdn.com/cartodb.js/v3/cartodb.js"></script>
-  <%= javascript_include_tag "application" %>
-  <%= yield :js %>
+  <%= requirejs_include_tag "countries" %>
   <%= render 'shared/js_footer' %>
 </body>
 </html>

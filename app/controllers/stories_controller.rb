@@ -1,7 +1,9 @@
 class StoriesController < ApplicationController
+  layout 'stories'
   helper_method :access_through_token?
 
   before_filter :load_stories
+  before_filter :load_more_stories
   before_filter :load_story, :only => [:show, :edit, :update, :destroy]
   before_filter :check_token, :only => [:edit]
 
@@ -11,20 +13,24 @@ class StoriesController < ApplicationController
   respond_to :json, :only => :index
 
   def index
-    stories_per_page = 5
 
-    unless params['for_map']
-      @page        = (params[:page] || 1).to_i
-      @total_pages = (Api::Story.visible.count.to_f / stories_per_page.to_f).ceil
-      @visible     = Api::Story.find_by_page(@page, stories_per_page)
+    if params['for_map']
+      respond_with @stories
+      return
+    else
+      redirect_to '/stayinformed/crowdsourced-stories'
+      return
     end
+  end
 
-    respond_with @stories
+  def show
+    @title = @story.title.capitalize
   end
 
   def new
     @url = stories_path
     @story = Api::Story.new
+    @title = I18n.translate 'stories.new.title'
   end
 
   def edit
@@ -61,11 +67,16 @@ class StoriesController < ApplicationController
   private
 
     def load_stories
-      @stories = if params['for_map'].present?
-                   Api::Story.visible
-                 else
-                   Api::Story.visible.sample(5)
-                 end
+      @stories = Api::Story.visible
+      unless params['for_map'].present? || @stories.blank? || @stories.count < 6
+        @stories = @stories.sample(5)
+      end
+    end
+    def load_more_stories
+      @more_stories = Api::Story.visible
+      unless  @more_stories.blank? || @more_stories.count < 6
+        @more_stories = @more_stories.sample(3)
+      end
     end
 
     def access_through_token?(story)

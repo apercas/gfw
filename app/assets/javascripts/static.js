@@ -1,110 +1,83 @@
-//= require gfw/ui/carrousel
+/**
+ * Application entry point.
+ */
+require([
+  'jquery',
+  'underscore',
+  'Class',
+  'backbone',
+  'mps',
+  'static/RouterStatic',
+  'static/CarrouselView',
+  'static/StoriesKeepView',
+  'static/VideoView',
+  'static/SearchView',
+  'static/FeedbackView',
+  'static/ApplicationsNavView',
+  'views/HeaderView',
+  'views/FooterView',
+  'views/TermsView',
+  'views/SidebarNavView',
+  'views/InterestingView',
+  'views/SourceMobileFriendlyView',
 
-gfw.ui.model.Static = cdb.core.Model.extend({
-  defaults: {
-    expanded: null, // accordion
-    selected: 'forest_change' // left_navigation
-  }
-});
+  '_string'
+], function($, _, Class, Backbone, mps, RouterStatic, CarrouselView, StoriesKeepView, VideoView, SearchView, FeedbackView, ApplicationsNavView, HeaderView, FooterView, TermsView, SidebarNavView, InterestingView, SourceMobileFriendlyView) {
+  'use strict';
 
+  var LandingPage = Class.extend({
 
-gfw.ui.view.Static = cdb.core.View.extend({
-  el: document.body,
+    $el: $('body'),
 
-  events: {
-    'click .source_header': '_onClickSource',
-    'click .nav-item': '_onClickNav'
-  },
+    init: function() {
+      var router = new RouterStatic();
 
-  initialize: function() {
-    this.model = new gfw.ui.model.Static();
+      this._initViews();
+      this._initApp();
+      this._youtubeApi();
+    },
 
-    this.model.bind('change:expanded', this._toggleSource, this);
-    this.model.bind('change:selected', this._toggleNav, this);
-  },
+    _youtubeApi: function(){
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      window.onYouTubeIframeAPIReady = _.bind(function(){
+        mps.publish('YoutubeAPI/ready');
+      },this)
+    },
 
-  _onClickSource: function(e) {
-    var source = $(e.target).closest('.source-item').attr('id');
+    /**
+     * Initialize the map by starting the history.
+     */
+    _initApp: function() {
+      if (!Backbone.History.started) {
+        Backbone.history.start({pushState: true});
+      }
+    },
 
-    if (source === this.model.get('expanded')) {
-      this.model.set('expanded', null);
-    } else {
-      this.model.set('expanded', source);
+    /**
+     * Initialize Application Views.
+     */
+    _initViews: function() {
+      new RouterStatic();
+      //shared
+      new HeaderView();
+      new FooterView();
+      new TermsView();
+      new SourceMobileFriendlyView();
+      //static
+      new SidebarNavView();
+      new CarrouselView();
+      new InterestingView();
+      new StoriesKeepView();
+      new VideoView();
+      new SearchView();
+      new FeedbackView();
+      new ApplicationsNavView();
     }
-  },
+  });
 
-  _onClickNav: function(e) {
-    e.preventDefault();
+  new LandingPage();
 
-    var $selected = $(e.target).closest('.nav-item'),
-        selected = $selected.attr('data-slug'),
-        href = $selected.attr('href');
-
-    if (selected !== this.model.get('selected')) {
-      window.router.navigate(href);
-
-      $('.nav-item.selected').removeClass('selected');
-      $selected.addClass('selected');
-
-      ga('send', 'pageview');
-      this.model.set('selected', selected);
-    }
-  },
-
-  _goTo: function($el, opt, callback) {
-    if ($el) {
-      var speed  = (opt && opt.speed)  || 500;
-      var delay  = (opt && opt.delay)  || 200;
-      var margin = (opt && opt.margin) || 0;
-
-      $('html, body').delay(delay).animate({scrollTop:$el.offset().top - margin}, speed);
-
-      callback && callback();
-    }
-  },
-
-  _onNavChange: function(tab, accordion) {
-    var that = this;
-
-    var $selected = $("[data-slug=" + tab + "]"),
-        selected = tab;
-
-    if (selected !== this.model.get('selected')) {
-      $('.nav-item.selected').removeClass('selected');
-      $selected.addClass('selected');
-
-      this.model.set('selected', selected);
-
-      setTimeout(function() {
-        if (!accordion) that._goTo($('#'+selected), { margin: 40 });
-      }, 800);
-    }
-
-    accordion && this.model.set('expanded', accordion);
-  },
-
-  _toggleSource: function() {
-    var source = this.model.get('expanded');
-
-    $('.expanded').removeClass('expanded');
-
-    if (source) {
-      var hash = '#'+source;
-
-      $(hash).addClass('expanded');
-      window.location.hash = hash;
-    } else {
-      window.location.hash = '';
-    }
-  },
-
-  _toggleNav: function() {
-    var selected = this.model.get('selected');
-
-    $('article.selected').fadeOut(250);
-    $('article').removeClass('selected');
-
-    $('#'+selected).addClass('selected');
-    $('article.selected').fadeIn(250);
-  }
 });

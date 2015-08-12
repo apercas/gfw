@@ -10,14 +10,25 @@ module StoriesHelper
     stories_path(:page => page)
   end
 
+  def previous_page_keep(page)
+    page -= 1
+    return "/stayinformed/crowdsourced-stories?page=#{page}"
+  end
+
+  def next_page_keep(page)
+    page += 1
+    return "/stayinformed/crowdsourced-stories?page=#{page}"
+  end
+
   def last_page?
     @page == @total_pages
   end
 
-  def story_image_or_map(media, coords)
+  def story_image_or_map(media, coords = nil)
     return "#{ENV['AWS_HOST']}/#{media[1]['preview_url']}" if media[1].present?
-
-    static_map(coords)
+    unless coords.nil?
+      static_map(coords)
+    end
   end
 
   def static_map(coords, size="266x266", zoom="3", stories=false)
@@ -35,7 +46,7 @@ module StoriesHelper
       youtube_id = $5
     end
 
-    %Q(<iframe width="483" height="362" src="//www.youtube.com/embed/#{youtube_id}" frameborder="0" allowfullscreen></iframe>)
+    %Q(<iframe width="560" height="315" src="//www.youtube.com/embed/#{youtube_id}" frameborder="0" allowfullscreen></iframe>)
   end
 
 end
